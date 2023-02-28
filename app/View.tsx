@@ -28,6 +28,8 @@ type IngredientProps = PropsWithoutRef<{ingredient: Ingredient}>;
 function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const [count, measurement] = ingredient.quantity;
+
   return (
     <View style={styles.ingredientContainer}>
       <Text
@@ -47,7 +49,7 @@ function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
             alignSelf: 'flex-end',
           },
         ]}>
-        {ingredient.quantity}
+        {[count, ' ', measurement]}
       </Text>
     </View>
   );
