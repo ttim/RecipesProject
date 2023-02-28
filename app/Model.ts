@@ -1,6 +1,25 @@
-const ALL_MEASUREMENTS = ['g', 'sprig'] as const;
-type MeasurementTuple = typeof ALL_MEASUREMENTS;
-export type Measurement = MeasurementTuple[number]; // ['g', 'sprig'] type, based on https://stackoverflow.com/questions/44480644/string-union-to-string-array
+const WEIGHTS = {
+  g: 1,
+  kg: 1000,
+} as const;
+
+const ML_IN_CUP = 236.588;
+
+const VOLUME = {
+  ml: 1,
+  l: 1000,
+  cup: ML_IN_CUP,
+  pint: 2 * ML_IN_CUP,
+  quart: 4 * ML_IN_CUP,
+} as const;
+
+const COUNTS = ['sprig'] as const;
+
+type Weights = keyof typeof WEIGHTS;
+type Volumes = keyof typeof VOLUME;
+type Counts = (typeof COUNTS)[number]; // https://stackoverflow.com/questions/44480644/string-union-to-string-array
+
+export type Measurement = Weights | Volumes | Counts;
 
 export type Quantity = [number, Measurement];
 
