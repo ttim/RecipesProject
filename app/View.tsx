@@ -1,5 +1,5 @@
 import React, {PropsWithoutRef} from 'react';
-import {Ingredient, Recipe} from './Model';
+import { Ingredient, Quantity, quantity_to_str, Recipe } from "./Model";
 import {StyleSheet, Text, useColorScheme, View} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -29,8 +29,6 @@ type IngredientProps = PropsWithoutRef<{ingredient: Ingredient}>;
 function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const [count, measurement] = ingredient.quantity;
-
   return (
     <View style={styles.ingredientContainer}>
       <Text
@@ -50,7 +48,7 @@ function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
             alignSelf: 'flex-end',
           },
         ]}>
-        {[count, ' ', measurement]}
+        {quantity_to_str(ingredient.quantity)}
       </Text>
     </View>
   );
