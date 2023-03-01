@@ -6,6 +6,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 const styles = StyleSheet.create({
   recipeContainer: {
     marginTop: 24,
+    paddingHorizontal: 24,
   },
   ingredientContainer: {
     marginTop: 8,
