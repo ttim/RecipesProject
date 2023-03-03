@@ -31,12 +31,14 @@ type Counts = (typeof COUNTS)[number]; // https://stackoverflow.com/questions/44
 
 export type Measurement = Weights | Volumes | Counts;
 
-export type Quantity = [number, Measurement] | 'to taste';
+export type Quantity = [number, Measurement] | 'to taste' | undefined;
 
 export function quantity_to_str(quantity: Quantity): string {
   switch (quantity) {
     case 'to taste':
       return 'to taste';
+    case undefined:
+      return 'undefined';
     default:
       return quantity[0] + ' ' + quantity[1];
   }
@@ -50,6 +52,7 @@ export type Ingredient = {
 export type Recipe = {
   name: string;
   items: Ingredient[];
+  yield: Quantity;
 };
 
 export const EXAMPLE_RECIPES: Recipe[] = [
@@ -60,8 +63,9 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'lobster stock', quantity: [3500, 'g']},
       {name: 'chamomile', quantity: [20, 'g']},
       {name: 'cream', quantity: [400, 'g']},
-      {name: 'salt', quantity: 'to taste'},
+      {name: 'salt', quantity: [15, 'g']},
     ],
+    yield: [6.25, 'quart'],
   },
   {
     name: 'Walnut Pate',
@@ -75,6 +79,7 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'rosemary', quantity: [1, 'sprig']},
       {name: 'salt', quantity: 'to taste'},
     ],
+    yield: undefined,
   },
   {
     name: 'Whipped Creme Fraiche Pate',
@@ -84,6 +89,7 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'lemon (zest + juice)', quantity: [1, 'item']},
       {name: 'salt', quantity: 'to taste'},
     ],
+    yield: undefined,
   },
   {
     name: 'Egg Confit',
@@ -93,6 +99,7 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'water', quantity: [5, 'g']},
       {name: 'salt', quantity: 'to taste'},
     ],
+    yield: undefined,
   },
   {
     name: 'Shio Koji marinade',
@@ -104,6 +111,7 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'yuzu juice', quantity: [30, 'g']},
       {name: 'canola oil', quantity: [40, 'g']},
     ],
+    yield: [1, 'pint'],
   },
   {
     name: 'Kumquat dressing',
@@ -120,6 +128,7 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'rice wine vinegar', quantity: [100, 'g']},
       {name: 'salt', quantity: 'to taste'},
     ],
+    yield: undefined,
   },
   {
     name: 'Chicken Liver Mousse',
@@ -133,6 +142,7 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'butter', quantity: [150, 'g']},
       {name: 'duck fat', quantity: [75, 'g']},
     ],
+    yield: undefined,
   },
   {
     name: 'Carrot soup',
@@ -145,5 +155,6 @@ export const EXAMPLE_RECIPES: Recipe[] = [
       {name: 'fresh ginger juice', quantity: [30, 'g']},
       {name: 'salt', quantity: 'to taste'},
     ],
+    yield: [1.65, 'quart'],
   },
 ];
