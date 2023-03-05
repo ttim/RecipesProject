@@ -3,7 +3,7 @@ import {CookingStackScreen} from './Cooking';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {LibraryStackScreen} from './Library';
-import {useColorScheme} from 'react-native';
+import { Text, useColorScheme } from "react-native";
 import {useBackgroundColor} from './View';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -24,8 +24,24 @@ function App(): JSX.Element {
             useBackgroundColor(),
           ],
         }}>
-        <Tab.Screen name="Cooking" component={CookingStackScreen} />
-        <Tab.Screen name="Library" component={LibraryStackScreen} />
+        <Tab.Screen
+          name="Cooking"
+          component={CookingStackScreen}
+          options={{
+            tabBarIcon: ({focused, color, size}) => {
+              return <Text style={{fontSize: size}}>🍳</Text>;
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Library"
+          component={LibraryStackScreen}
+          options={{
+            tabBarIcon: ({focused, color, size}) => {
+              return <Text style={{fontSize: size}}>📓</Text>;
+            },
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
