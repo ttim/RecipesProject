@@ -29,19 +29,23 @@ type Props = NativeStackScreenProps<ParamListBase>;
 function InProgressScreen({navigation}: Props): JSX.Element {
   const textColor = useTextColor();
 
+  const [recipes, setRecipes] = useState([] as Recipe[]);
+
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Button
           title="+"
           color={textColor}
-          onPress={() => navigation.navigate('AddInProgressItem')}
+          onPress={() =>
+            navigation.navigate('AddInProgressItem', {
+              addRecipe: (recipe: Recipe) => setRecipes([...recipes, recipe]),
+            })
+          }
         />
       ),
     });
   });
-
-  const [recipes, setRecipes] = useState(EXAMPLE_RECIPES);
 
   return (
     <SafeAreaView style={useBackgroundColorStyle()}>
@@ -64,6 +68,7 @@ function InProgressScreen({navigation}: Props): JSX.Element {
 }
 
 function AddInProgressItemModalScreen(
+  // todo: deconstruct into navigation and don't pass callback as function
   props: NativeStackScreenProps<{addRecipe: (recipe: Recipe) => void}>,
 ): JSX.Element {
   const textColor = useTextColor();
@@ -108,7 +113,10 @@ function AddInProgressItemModalScreen(
         <ListItem
           key={index}
           bottomDivider
-          onPress={() => alert('add ' + recipe.name)}>
+          onPress={() => {
+            props.route.params.addRecipe(recipe);
+            props.navigation.goBack();
+          }}>
           <ListItem.Content>
             <ListItem.Title>{recipe.name}</ListItem.Title>
           </ListItem.Content>
