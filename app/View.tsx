@@ -29,13 +29,13 @@ type IngredientProps = PropsWithoutRef<{ingredient: Ingredient}>;
 function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
   return (
     <View style={styles.ingredientContainer}>
-      <Text style={[styles.ingredientText, useTextColor()]}>
+      <Text style={[styles.ingredientText, useTextColorStyle()]}>
         {ingredient.name}
       </Text>
       <Text
         style={[
           styles.ingredientText,
-          useTextColor(),
+          useTextColorStyle(),
           {alignSelf: 'flex-end'},
         ]}>
         {quantity_to_str(ingredient.quantity)}
@@ -75,7 +75,7 @@ type RecipesProps = PropsWithoutRef<{
 }>;
 export function Recipes({recipes, onDeleteRecipe}: RecipesProps): JSX.Element {
   return (
-    <View style={useBackgroundColor()}>
+    <View style={useBackgroundColorStyle()}>
       <View>
         {recipes.map((recipe, index) => (
           <RecipeComponent
@@ -94,13 +94,17 @@ export function Logo(): JSX.Element {
 }
 
 export function useBackgroundColor() {
-  return {
-    backgroundColor: useColorScheme() === 'dark' ? Colors.black : Colors.white,
-  };
+  return useColorScheme() === 'dark' ? Colors.black : Colors.white;
+}
+
+export function useBackgroundColorStyle() {
+  return {backgroundColor: useBackgroundColor()};
 }
 
 export function useTextColor() {
-  return {
-    color: useColorScheme() === 'dark' ? Colors.white : Colors.black,
-  };
+  return useColorScheme() === 'dark' ? Colors.white : Colors.black;
+}
+
+export function useTextColorStyle() {
+  return {color: useTextColor()};
 }

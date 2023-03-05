@@ -4,7 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {LibraryStackScreen} from './Library';
 import {Text, useColorScheme} from 'react-native';
-import {useBackgroundColor} from './View';
+import {useBackgroundColorStyle} from './View';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const Tab = createBottomTabNavigator();
@@ -21,7 +21,7 @@ function App(): JSX.Element {
             {
               borderTopColor: isDarkMode ? Colors.darker : Colors.lighter,
             },
-            useBackgroundColor(),
+            useBackgroundColorStyle(),
           ],
         }}>
         <Tab.Screen

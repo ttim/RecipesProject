@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {Logo, Recipes, useBackgroundColor, useTextColor} from './View';
+import { Logo, Recipes, useBackgroundColor, useBackgroundColorStyle, useTextColor, useTextColorStyle } from "./View";
 import {EXAMPLE_RECIPES} from './Model';
 import {
   createNativeStackNavigator,
@@ -19,12 +19,14 @@ import {ParamListBase} from '@react-navigation/native';
 type Props = NativeStackScreenProps<ParamListBase>;
 
 function InProgressScreen({navigation}: Props): JSX.Element {
+  const textColor = useTextColor();
+
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Button
           title="+"
-          color="#fff"
+          color={textColor}
           onPress={() => navigation.navigate('AddInProgressItem')}
         />
       ),
@@ -34,16 +36,16 @@ function InProgressScreen({navigation}: Props): JSX.Element {
   const [recipes, setRecipes] = useState(EXAMPLE_RECIPES);
 
   return (
-    <SafeAreaView style={useBackgroundColor()}>
+    <SafeAreaView style={useBackgroundColorStyle()}>
       <StatusBar
         barStyle={
           useColorScheme() === 'dark' ? 'light-content' : 'dark-content'
         }
-        backgroundColor={useBackgroundColor().backgroundColor}
+        backgroundColor={useBackgroundColor()}
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={useBackgroundColor()}>
+        style={useBackgroundColorStyle()}>
         <Recipes
           recipes={recipes}
           onDeleteRecipe={idx => {
@@ -56,10 +58,16 @@ function InProgressScreen({navigation}: Props): JSX.Element {
 }
 
 function AddInProgressItemModalScreen({navigation}: Props): JSX.Element {
+  const textColor = useTextColor();
+
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button title="↩️" color="#fff" onPress={() => navigation.goBack()} />
+        <Button
+          title="↩️"
+          color={textColor}
+          onPress={() => navigation.goBack()}
+        />
       ),
     });
   });
@@ -68,7 +76,7 @@ function AddInProgressItemModalScreen({navigation}: Props): JSX.Element {
     <View
       style={[
         {flex: 1, alignItems: 'center', justifyContent: 'center'},
-        useBackgroundColor(),
+        useBackgroundColorStyle(),
       ]}>
       <Text style={{fontSize: 30}}>Add recipe</Text>
       <Button onPress={() => navigation.goBack()} title="Dismiss" />
@@ -79,14 +87,16 @@ function AddInProgressItemModalScreen({navigation}: Props): JSX.Element {
 const Stack = createNativeStackNavigator();
 
 export function CookingStackScreen(): JSX.Element {
+  const textColor = useTextColor();
+
   return (
     <Stack.Navigator
       initialRouteName="InProgress"
       screenOptions={{
-        headerStyle: useBackgroundColor(),
-        headerTitleStyle: useTextColor(),
+        headerStyle: useBackgroundColorStyle(),
+        headerTitleStyle: useTextColorStyle(),
         headerLeft: Logo,
-        headerRight: () => <Button title="+" color="#fff" />,
+        headerRight: () => <Button title="+" color={textColor} />,
       }}>
       <Stack.Screen
         name="InProgress"
