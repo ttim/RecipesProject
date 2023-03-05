@@ -31,23 +31,9 @@ function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
 
   return (
     <View style={styles.ingredientContainer}>
+      <Text style={[styles.ingredientText, useTextColor()]}>{ingredient.name}</Text>
       <Text
-        style={[
-          styles.ingredientText,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {ingredient.name}
-      </Text>
-      <Text
-        style={[
-          styles.ingredientText,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-            alignSelf: 'flex-end',
-          },
-        ]}>
+        style={[styles.ingredientText, useTextColor(), {alignSelf: 'flex-end'}]}>
         {quantity_to_str(ingredient.quantity)}
       </Text>
     </View>
@@ -80,13 +66,8 @@ function RecipeComponent({recipe}: RecipeProps): JSX.Element {
 
 type RecipesProps = PropsWithoutRef<{recipes: Recipe[]}>;
 export function Recipes({recipes}: RecipesProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
-    <View
-      style={{
-        backgroundColor: isDarkMode ? Colors.black : Colors.white,
-      }}>
+    <View style={useBackgroundColor()}>
       <View>
         {recipes.map(recipe => (
           <RecipeComponent key={recipe.name} recipe={recipe} />
@@ -94,4 +75,20 @@ export function Recipes({recipes}: RecipesProps): JSX.Element {
       </View>
     </View>
   );
+}
+
+export function Logo(): JSX.Element {
+  return <Text>👨‍🍳🤌</Text>;
+}
+
+export function useBackgroundColor() {
+  return {
+    backgroundColor: useColorScheme() === 'dark' ? Colors.black : Colors.white,
+  };
+}
+
+export function useTextColor() {
+  return {
+    color: useColorScheme() === 'dark' ? Colors.white : Colors.black,
+  };
 }

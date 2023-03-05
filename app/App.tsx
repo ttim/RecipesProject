@@ -1,35 +1,33 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  useColorScheme,
-} from 'react-native';
+import {CookingStackScreen} from './Cooking';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {LibraryStackScreen} from './Library';
+import {useColorScheme} from 'react-native';
+import {useBackgroundColor} from './View';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
-import {EXAMPLE_RECIPES} from './Model';
-import {Recipes} from './View';
+const Tab = createBottomTabNavigator();
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <Recipes recipes={EXAMPLE_RECIPES} />
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: [
+            {
+              borderTopColor: isDarkMode ? Colors.darker : Colors.lighter,
+            },
+            useBackgroundColor(),
+          ],
+        }}>
+        <Tab.Screen name="Cooking" component={CookingStackScreen} />
+        <Tab.Screen name="Library" component={LibraryStackScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
