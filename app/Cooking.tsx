@@ -7,12 +7,18 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import React, { useState } from "react";
+import React, {useState} from 'react';
 import {Logo, Recipes, useBackgroundColor, useTextColor} from './View';
 import {EXAMPLE_RECIPES} from './Model';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import {ParamListBase} from '@react-navigation/native';
 
-function InProgressScreen({navigation}): JSX.Element {
+type Props = NativeStackScreenProps<ParamListBase>;
+
+function InProgressScreen({navigation}: Props): JSX.Element {
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -49,7 +55,7 @@ function InProgressScreen({navigation}): JSX.Element {
   );
 }
 
-function AddInProgressItemModalScreen({navigation}): JSX.Element {
+function AddInProgressItemModalScreen({navigation}: Props): JSX.Element {
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (

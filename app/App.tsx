@@ -3,7 +3,7 @@ import {CookingStackScreen} from './Cooking';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {LibraryStackScreen} from './Library';
-import { Text, useColorScheme } from "react-native";
+import {Text, useColorScheme} from 'react-native';
 import {useBackgroundColor} from './View';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 

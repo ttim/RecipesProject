@@ -1,6 +1,6 @@
 import React, {PropsWithoutRef} from 'react';
-import { Ingredient, Quantity, quantity_to_str, Recipe } from "./Model";
-import { Button, StyleSheet, Text, useColorScheme, View } from "react-native";
+import {Ingredient, quantity_to_str, Recipe} from './Model';
+import {Button, StyleSheet, Text, useColorScheme, View} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
@@ -29,9 +29,15 @@ type IngredientProps = PropsWithoutRef<{ingredient: Ingredient}>;
 function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
   return (
     <View style={styles.ingredientContainer}>
-      <Text style={[styles.ingredientText, useTextColor()]}>{ingredient.name}</Text>
+      <Text style={[styles.ingredientText, useTextColor()]}>
+        {ingredient.name}
+      </Text>
       <Text
-        style={[styles.ingredientText, useTextColor(), {alignSelf: 'flex-end'}]}>
+        style={[
+          styles.ingredientText,
+          useTextColor(),
+          {alignSelf: 'flex-end'},
+        ]}>
         {quantity_to_str(ingredient.quantity)}
       </Text>
     </View>
