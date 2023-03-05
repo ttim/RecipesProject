@@ -6,6 +6,7 @@ import {LibraryStackScreen} from './Library';
 import {Text, useColorScheme} from 'react-native';
 import {useBackgroundColorStyle} from './View';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,37 +14,39 @@ function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: [
-            {
-              borderTopColor: isDarkMode ? Colors.darker : Colors.lighter,
-            },
-            useBackgroundColorStyle(),
-          ],
-        }}>
-        <Tab.Screen
-          name="Cooking"
-          component={CookingStackScreen}
-          options={{
-            tabBarIcon: ({focused, color, size}) => {
-              return <Text style={{fontSize: size}}>🍳</Text>;
-            },
-          }}
-        />
-        <Tab.Screen
-          name="Library"
-          component={LibraryStackScreen}
-          options={{
-            tabBarIcon: ({focused, color, size}) => {
-              return <Text style={{fontSize: size}}>📓</Text>;
-            },
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: [
+              {
+                borderTopColor: isDarkMode ? Colors.darker : Colors.lighter,
+              },
+              useBackgroundColorStyle(),
+            ],
+          }}>
+          <Tab.Screen
+            name="Cooking"
+            component={CookingStackScreen}
+            options={{
+              tabBarIcon: ({focused, color, size}) => {
+                return <Text style={{fontSize: size}}>🍳</Text>;
+              },
+            }}
+          />
+          <Tab.Screen
+            name="Library"
+            component={LibraryStackScreen}
+            options={{
+              tabBarIcon: ({focused, color, size}) => {
+                return <Text style={{fontSize: size}}>📓</Text>;
+              },
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
