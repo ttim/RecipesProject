@@ -3,10 +3,10 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  Text,
-  View,
-} from 'react-native';
-import React, {useState} from 'react';
+  Text, useColorScheme,
+  View
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import {
   Logo,
   Recipes,
@@ -16,12 +16,13 @@ import {
   useTextColorStyle,
   useTextContentColor,
 } from './View';
-import {EXAMPLE_RECIPES} from './Model';
+import { EXAMPLE_RECIPES, Recipe } from "./Model";
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {ParamListBase} from '@react-navigation/native';
+import {ListItem, SearchBar} from 'react-native-elements';
 
 type Props = NativeStackScreenProps<ParamListBase>;
 
@@ -62,29 +63,57 @@ function InProgressScreen({navigation}: Props): JSX.Element {
   );
 }
 
-function AddInProgressItemModalScreen({navigation}: Props): JSX.Element {
+function AddInProgressItemModalScreen(
+  props: NativeStackScreenProps<{addRecipe: (recipe: Recipe) => void}>,
+): JSX.Element {
   const textColor = useTextColor();
 
-  React.useEffect(() => {
-    navigation.setOptions({
+  useEffect(() => {
+    props.navigation.setOptions({
       headerRight: () => (
         <Button
           title="↩️"
           color={textColor}
-          onPress={() => navigation.goBack()}
+          onPress={() => props.navigation.goBack()}
         />
       ),
     });
   });
 
+  const [search, setSearch] = useState('');
+  const [recipes, setRecipes] = useState(EXAMPLE_RECIPES);
+
+  const updateSearch = (search: string) => {
+    setSearch(search);
+    if (search === '') {
+      setRecipes(EXAMPLE_RECIPES);
+    } else {
+      setRecipes(
+        EXAMPLE_RECIPES.filter(recipe =>
+          recipe.name.toLowerCase().includes(search.toLowerCase()),
+        ),
+      );
+    }
+  };
+
   return (
-    <View
-      style={[
-        {flex: 1, alignItems: 'center', justifyContent: 'center'},
-        useBackgroundColorStyle(),
-      ]}>
-      <Text style={{fontSize: 30}}>Add recipe</Text>
-      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    <View style={useBackgroundColorStyle()}>
+      <SearchBar
+        placeholder="Type Here..."
+        onChangeText={updateSearch}
+        value={search}
+        lightTheme={useColorScheme() !== 'dark'}
+      />
+      {recipes.map((recipe, index) => (
+        <ListItem
+          key={index}
+          bottomDivider
+          onPress={() => alert('add ' + recipe.name)}>
+          <ListItem.Content>
+            <ListItem.Title>{recipe.name}</ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
+      ))}
     </View>
   );
 }
