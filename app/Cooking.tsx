@@ -3,10 +3,10 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  Text, useColorScheme,
-  View
-} from "react-native";
-import React, { useEffect, useState } from "react";
+  useColorScheme,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {
   Logo,
   Recipes,
@@ -16,7 +16,7 @@ import {
   useTextColorStyle,
   useTextContentColor,
 } from './View';
-import { EXAMPLE_RECIPES, Recipe } from "./Model";
+import { EXAMPLE_RECIPES, Recipe } from './Model';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -31,7 +31,7 @@ function InProgressScreen({navigation}: Props): JSX.Element {
 
   const [recipes, setRecipes] = useState([] as Recipe[]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Button
