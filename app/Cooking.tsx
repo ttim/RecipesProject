@@ -4,11 +4,18 @@ import {
   ScrollView,
   StatusBar,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import { Logo, Recipes, useBackgroundColor, useBackgroundColorStyle, useTextColor, useTextColorStyle } from "./View";
+import {
+  Logo,
+  Recipes,
+  useBackgroundColor,
+  useBackgroundColorStyle,
+  useTextColor,
+  useTextColorStyle,
+  useTextContentColor,
+} from './View';
 import {EXAMPLE_RECIPES} from './Model';
 import {
   createNativeStackNavigator,
@@ -38,9 +45,7 @@ function InProgressScreen({navigation}: Props): JSX.Element {
   return (
     <SafeAreaView style={useBackgroundColorStyle()}>
       <StatusBar
-        barStyle={
-          useColorScheme() === 'dark' ? 'light-content' : 'dark-content'
-        }
+        barStyle={useTextContentColor()}
         backgroundColor={useBackgroundColor()}
       />
       <ScrollView
