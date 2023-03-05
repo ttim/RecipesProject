@@ -7,7 +7,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from "react";
 import {Logo, Recipes, useBackgroundColor, useTextColor} from './View';
 import {EXAMPLE_RECIPES} from './Model';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -25,6 +25,8 @@ function InProgressScreen({navigation}): JSX.Element {
     });
   });
 
+  const [recipes, setRecipes] = useState(EXAMPLE_RECIPES);
+
   return (
     <SafeAreaView style={useBackgroundColor()}>
       <StatusBar
@@ -36,7 +38,12 @@ function InProgressScreen({navigation}): JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={useBackgroundColor()}>
-        <Recipes recipes={EXAMPLE_RECIPES} />
+        <Recipes
+          recipes={recipes}
+          onDeleteRecipe={idx => {
+            setRecipes(recipes.slice(0, idx).concat(recipes.slice(idx + 1)));
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );

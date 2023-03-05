@@ -1,6 +1,6 @@
 import React, {PropsWithoutRef} from 'react';
 import { Ingredient, Quantity, quantity_to_str, Recipe } from "./Model";
-import {StyleSheet, Text, useColorScheme, View} from 'react-native';
+import { Button, StyleSheet, Text, useColorScheme, View } from "react-native";
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
@@ -27,8 +27,6 @@ const styles = StyleSheet.create({
 type IngredientProps = PropsWithoutRef<{ingredient: Ingredient}>;
 
 function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <View style={styles.ingredientContainer}>
       <Text style={[styles.ingredientText, useTextColor()]}>{ingredient.name}</Text>
@@ -40,8 +38,8 @@ function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
   );
 }
 
-type RecipeProps = PropsWithoutRef<{recipe: Recipe}>;
-function RecipeComponent({recipe}: RecipeProps): JSX.Element {
+type RecipeProps = PropsWithoutRef<{recipe: Recipe; onDelete: () => void}>;
+function RecipeComponent({recipe, onDelete}: RecipeProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
@@ -54,6 +52,7 @@ function RecipeComponent({recipe}: RecipeProps): JSX.Element {
           },
         ]}>
         {recipe.name}
+        <Button title="✅" onPress={onDelete} />
       </Text>
       <View>
         {recipe.items.map(ingredient => (
@@ -64,13 +63,20 @@ function RecipeComponent({recipe}: RecipeProps): JSX.Element {
   );
 }
 
-type RecipesProps = PropsWithoutRef<{recipes: Recipe[]}>;
-export function Recipes({recipes}: RecipesProps): JSX.Element {
+type RecipesProps = PropsWithoutRef<{
+  recipes: Recipe[];
+  onDeleteRecipe: (idx: number) => void;
+}>;
+export function Recipes({recipes, onDeleteRecipe}: RecipesProps): JSX.Element {
   return (
     <View style={useBackgroundColor()}>
       <View>
-        {recipes.map(recipe => (
-          <RecipeComponent key={recipe.name} recipe={recipe} />
+        {recipes.map((recipe, index) => (
+          <RecipeComponent
+            key={recipe.name}
+            recipe={recipe}
+            onDelete={() => onDeleteRecipe(index)}
+          />
         ))}
       </View>
     </View>
