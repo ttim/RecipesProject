@@ -1,6 +1,13 @@
 import React, {PropsWithoutRef} from 'react';
-import { Ingredient, quantity_to_str, Recipe, scale_quantity } from "./Model";
-import { Button, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import {Ingredient, Recipe} from './Model';
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
@@ -26,30 +33,59 @@ const styles = StyleSheet.create({
 
 type IngredientProps = PropsWithoutRef<{
   ingredient: Ingredient;
-  edit: boolean;
   scale: number;
+  updateScale: (newScale: number) => void;
 }>;
 
 function IngredientComponent({
   ingredient,
-  edit,
   scale,
+  updateScale,
 }: IngredientProps): JSX.Element {
+  var quantity_vdom;
+  switch (ingredient.quantity) {
+    case 'to taste': {
+      quantity_vdom = [<Text>To taste</Text>];
+      break;
+    }
+    case undefined: {
+      quantity_vdom = [<Text>Undefined</Text>];
+      break;
+    }
+    default: {
+      const quantity = ingredient.quantity[0] * scale + '';
+      quantity_vdom = [
+        <TextInput
+          style={[
+            useBackgroundColorStyle(),
+            {
+              borderWidth: 1,
+              fontStyle: 'italic',
+              borderStyle: 'dashed',
+              paddingHorizontal: 5,
+              paddingVertical: 0,
+            },
+          ]}
+          value={quantity}
+          onChangeText={newText => {
+            const newCount = Number(newText);
+            if (!isNaN(newCount)) {
+              updateScale(newCount / ingredient.quantity[0])
+            }
+          }}
+        />,
+        <Text> {ingredient.quantity[1]}</Text>,
+        <Button title="📏" />,
+      ];
+    }
+  }
+
   return (
     <View style={styles.ingredientContainer}>
       <Text style={[styles.ingredientText, useTextColorStyle()]}>
         {ingredient.name}
       </Text>
-      <Text
-        style={[
-          styles.ingredientText,
-          useTextColorStyle(),
-          {alignSelf: 'flex-end'},
-        ]}>
-        {quantity_to_str(scale_quantity(ingredient.quantity, scale))}
-        <Button title="✏️" />
-        <Button title="📏" />
-      </Text>
+      {quantity_vdom}
     </View>
   );
 }
@@ -58,8 +94,14 @@ type RecipeProps = PropsWithoutRef<{
   recipe: Recipe;
   onDelete: () => void;
   scale: number;
+  updateScale: (newScale: number) => void;
 }>;
-function RecipeComponent({recipe, onDelete, scale}: RecipeProps): JSX.Element {
+function RecipeComponent({
+  recipe,
+  onDelete,
+  scale,
+  updateScale,
+}: RecipeProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
@@ -80,7 +122,7 @@ function RecipeComponent({recipe, onDelete, scale}: RecipeProps): JSX.Element {
             key={ingredient.name}
             ingredient={ingredient}
             scale={scale}
-            edit={false}
+            updateScale={updateScale}
           />
         ))}
       </View>
@@ -91,8 +133,13 @@ function RecipeComponent({recipe, onDelete, scale}: RecipeProps): JSX.Element {
 type RecipesProps = PropsWithoutRef<{
   recipes: [Recipe, number][];
   onDeleteRecipe: (idx: number) => void;
+  updateScaleRecipe: (idx: number, newScale: number) => void;
 }>;
-export function Recipes({recipes, onDeleteRecipe}: RecipesProps): JSX.Element {
+export function Recipes({
+  recipes,
+  onDeleteRecipe,
+  updateScaleRecipe,
+}: RecipesProps): JSX.Element {
   return (
     <View style={useBackgroundColorStyle()}>
       <View>
@@ -102,6 +149,9 @@ export function Recipes({recipes, onDeleteRecipe}: RecipesProps): JSX.Element {
             recipe={recipe}
             onDelete={() => onDeleteRecipe(index)}
             scale={scale}
+            updateScale={newScale => {
+              updateScaleRecipe(index, newScale);
+            }}
           />
         ))}
       </View>

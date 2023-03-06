@@ -69,6 +69,13 @@ function InProgressScreen({
           onDeleteRecipe={idx => {
             setRecipes(recipes.slice(0, idx).concat(recipes.slice(idx + 1)));
           }}
+          updateScaleRecipe={(idx, newScale) => {
+            const newRecipes = [] as [Recipe, number][];
+            newRecipes.push(...recipes.slice(0, idx));
+            newRecipes.push([recipes[idx][0], newScale]);
+            newRecipes.push(...recipes.slice(idx + 1));
+            setRecipes(newRecipes);
+          }}
         />
       </ScrollView>
     </SafeAreaView>
