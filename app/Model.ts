@@ -33,32 +33,36 @@ export type Measurement = Weights | Volumes | Counts;
 
 export type Quantity = [number, Measurement] | 'to taste' | undefined;
 
-export function scale_quantity(quantity: Quantity, scale: number): Quantity {
-  switch (quantity) {
-    case 'to taste':
-      return 'to taste';
-    case undefined:
-      return undefined;
-    default:
-      return [quantity[0] * scale, quantity[1]];
-  }
-}
-
 export function quantity_to_str(quantity: Quantity): string {
-  switch (quantity) {
-    case 'to taste':
-      return 'to taste';
-    case undefined:
-      return 'undefined';
-    default:
-      return quantity[0] + ' ' + quantity[1];
-  }
+  return quantity_match(quantity, {
+    toTaste: () => 'to taste',
+    undefined: () => 'undefined',
+    regular: (count, measurement) => count + ' '+measurement,
+  });
 }
 
 export type Ingredient = {
   name: string;
   quantity: Quantity;
 };
+
+export function quantity_match<T>(
+  value: Quantity,
+  match: {
+    toTaste: () => T;
+    undefined: () => T;
+    regular: (count: number, measurement: Measurement) => T;
+  },
+): T {
+  switch (value) {
+    case 'to taste':
+      return match.toTaste();
+    case undefined:
+      return match.undefined();
+    default:
+      return match.regular(value[0], value[1]);
+  }
+}
 
 export type Recipe = {
   name: string;

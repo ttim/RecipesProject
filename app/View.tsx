@@ -1,5 +1,5 @@
 import React, {PropsWithoutRef} from 'react';
-import {Ingredient, Recipe} from './Model';
+import {Ingredient, quantity_match, Recipe} from './Model';
 import {
   Button,
   StyleSheet,
@@ -42,50 +42,52 @@ function IngredientComponent({
   scale,
   updateScale,
 }: IngredientProps): JSX.Element {
-  var quantity_vdom;
-  switch (ingredient.quantity) {
-    case 'to taste': {
-      quantity_vdom = [<Text>To taste</Text>];
-      break;
-    }
-    case undefined: {
-      quantity_vdom = [<Text>Undefined</Text>];
-      break;
-    }
-    default: {
-      const quantity = ingredient.quantity[0] * scale + '';
-      quantity_vdom = [
-        <TextInput
-          style={[
-            useBackgroundColorStyle(),
-            {
-              borderWidth: 1,
-              fontStyle: 'italic',
-              borderStyle: 'dashed',
-              paddingHorizontal: 5,
-              paddingVertical: 0,
-            },
-          ]}
-          value={quantity}
-          onChangeText={newText => {
-            const newCount = Number(newText);
-            if (!isNaN(newCount)) {
-              updateScale(newCount / ingredient.quantity[0])
-            }
-          }}
-        />,
-        <Text> {ingredient.quantity[1]}</Text>,
-        <Button title="📏" />,
-      ];
-    }
-  }
+  const count_vdom = quantity_match(ingredient.quantity, {
+    undefined: () => <View />,
+    toTaste: () => <View />,
+    regular: (count, measurement) => (
+      <TextInput
+        style={[
+          useBackgroundColorStyle(),
+          {
+            borderWidth: 1,
+            fontStyle: 'italic',
+            borderStyle: 'dashed',
+            paddingHorizontal: 5,
+            paddingVertical: 0,
+          },
+        ]}
+        value={(count * scale).toString()}
+        onChangeText={newText => {
+          const newCount = Number(newText);
+          if (!isNaN(newCount)) {
+            updateScale(newCount / count);
+          }
+        }}
+      />
+    ),
+  });
+
+  const measurement_vdom = quantity_match(ingredient.quantity, {
+    undefined: () => <Text>Undefined</Text>,
+    toTaste: () => <Text>To taste</Text>,
+    regular: (count, measurement) => (
+      <View style={{flexDirection: 'row', height: 40}}>
+        <Text> {measurement}</Text>
+        <Button title="📏" />
+      </View>
+    ),
+  });
 
   return (
-    <View style={styles.ingredientContainer}>
-      <Text style={[styles.ingredientText, useTextColorStyle()]}>
-        {ingredient.name}
-      </Text>
-      {quantity_vdom}
+    <View style={[styles.ingredientContainer, {flexDirection: 'row'}]}>
+      <View style={{flex: 7}}>
+        <Text style={[styles.ingredientText, useTextColorStyle()]}>
+          {ingredient.name}
+        </Text>
+      </View>
+      <View style={{flex: 2}}>{count_vdom}</View>
+      <View style={{flex: 1}}>{measurement_vdom}</View>
     </View>
   );
 }
