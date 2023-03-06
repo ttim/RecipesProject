@@ -1,6 +1,6 @@
 import React, {PropsWithoutRef} from 'react';
-import {Ingredient, quantity_to_str, Recipe} from './Model';
-import {Button, StyleSheet, Text, useColorScheme, View} from 'react-native';
+import { Ingredient, quantity_to_str, Recipe, scale_quantity } from "./Model";
+import { Button, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
@@ -24,9 +24,17 @@ const styles = StyleSheet.create({
   },
 });
 
-type IngredientProps = PropsWithoutRef<{ingredient: Ingredient}>;
+type IngredientProps = PropsWithoutRef<{
+  ingredient: Ingredient;
+  edit: boolean;
+  scale: number;
+}>;
 
-function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
+function IngredientComponent({
+  ingredient,
+  edit,
+  scale,
+}: IngredientProps): JSX.Element {
   return (
     <View style={styles.ingredientContainer}>
       <Text style={[styles.ingredientText, useTextColorStyle()]}>
@@ -38,14 +46,20 @@ function IngredientComponent({ingredient}: IngredientProps): JSX.Element {
           useTextColorStyle(),
           {alignSelf: 'flex-end'},
         ]}>
-        {quantity_to_str(ingredient.quantity)}
+        {quantity_to_str(scale_quantity(ingredient.quantity, scale))}
+        <Button title="✏️" />
+        <Button title="📏" />
       </Text>
     </View>
   );
 }
 
-type RecipeProps = PropsWithoutRef<{recipe: Recipe; onDelete: () => void}>;
-function RecipeComponent({recipe, onDelete}: RecipeProps): JSX.Element {
+type RecipeProps = PropsWithoutRef<{
+  recipe: Recipe;
+  onDelete: () => void;
+  scale: number;
+}>;
+function RecipeComponent({recipe, onDelete, scale}: RecipeProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
@@ -62,7 +76,12 @@ function RecipeComponent({recipe, onDelete}: RecipeProps): JSX.Element {
       </Text>
       <View>
         {recipe.items.map(ingredient => (
-          <IngredientComponent key={ingredient.name} ingredient={ingredient} />
+          <IngredientComponent
+            key={ingredient.name}
+            ingredient={ingredient}
+            scale={scale}
+            edit={false}
+          />
         ))}
       </View>
     </View>
@@ -70,18 +89,19 @@ function RecipeComponent({recipe, onDelete}: RecipeProps): JSX.Element {
 }
 
 type RecipesProps = PropsWithoutRef<{
-  recipes: Recipe[];
+  recipes: [Recipe, number][];
   onDeleteRecipe: (idx: number) => void;
 }>;
 export function Recipes({recipes, onDeleteRecipe}: RecipesProps): JSX.Element {
   return (
     <View style={useBackgroundColorStyle()}>
       <View>
-        {recipes.map((recipe, index) => (
+        {recipes.map(([recipe, scale], index) => (
           <RecipeComponent
             key={recipe.name}
             recipe={recipe}
             onDelete={() => onDeleteRecipe(index)}
+            scale={scale}
           />
         ))}
       </View>

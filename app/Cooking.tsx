@@ -34,11 +34,11 @@ function InProgressScreen({
 }: NativeStackScreenProps<StackParams, 'InProgress'>): JSX.Element {
   const textColor = useTextColor();
 
-  const [recipes, setRecipes] = useState([] as Recipe[]);
+  const [recipes, setRecipes] = useState([] as [Recipe, number][]);
 
   useEffect(() => {
     if (route.params?.addedRecipe) {
-      setRecipes([...recipes, route.params?.addedRecipe]);
+      setRecipes([...recipes, [route.params?.addedRecipe, 1]]);
       navigation.setParams({addedRecipe: undefined});
     }
   }, [navigation, recipes, route.params?.addedRecipe]);

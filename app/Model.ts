@@ -33,6 +33,17 @@ export type Measurement = Weights | Volumes | Counts;
 
 export type Quantity = [number, Measurement] | 'to taste' | undefined;
 
+export function scale_quantity(quantity: Quantity, scale: number): Quantity {
+  switch (quantity) {
+    case 'to taste':
+      return 'to taste';
+    case undefined:
+      return undefined;
+    default:
+      return [quantity[0] * scale, quantity[1]];
+  }
+}
+
 export function quantity_to_str(quantity: Quantity): string {
   switch (quantity) {
     case 'to taste':
