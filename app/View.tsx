@@ -1,5 +1,5 @@
 import React, {PropsWithoutRef} from 'react';
-import {Ingredient, quantity_match, Recipe} from './Model';
+import {Ingredient, Quantity, Recipe} from './Model';
 import {
   Button,
   StyleSheet,
@@ -37,50 +37,75 @@ type IngredientProps = PropsWithoutRef<{
   updateScale: (newScale: number) => void;
 }>;
 
+function QuantityComponent({
+  quantity,
+  scale,
+  updateScale,
+}: PropsWithoutRef<{
+  quantity: Quantity;
+  scale: number;
+  updateScale: (newScale: number) => void;
+}>) {
+  const backgroundColorStyle = useBackgroundColorStyle();
+  const textColor = useTextColor();
+
+  switch (quantity.type) {
+    case 'undefined':
+      return <View />;
+    case 'to taste':
+      return <View />;
+    case 'regular':
+      return (
+        <TextInput
+          style={[
+            backgroundColorStyle,
+            {
+              borderWidth: 1,
+              fontStyle: 'italic',
+              borderStyle: 'dashed',
+              paddingHorizontal: 5,
+              paddingVertical: 0,
+              color: textColor,
+              borderColor: textColor,
+            },
+          ]}
+          value={(quantity.count * scale).toString()}
+          onChangeText={newText => {
+            const newCount = Number(newText);
+            if (!isNaN(newCount)) {
+              updateScale(newCount / quantity.count);
+            }
+          }}
+        />
+      );
+  }
+}
+
+function MeasurementComponent({
+  quantity,
+}: PropsWithoutRef<{quantity: Quantity}>) {
+  const textColor = useTextColorStyle();
+
+  switch (quantity.type) {
+    case 'regular':
+      return (
+        <View style={{flexDirection: 'row', height: 40}}>
+          <Text style={textColor}> {quantity.measurement}</Text>
+          <Button title="📏" />
+        </View>
+      );
+    case 'to taste':
+      return <Text>To taste</Text>;
+    case 'undefined':
+      return <Text>Undefined</Text>;
+  }
+}
+
 function IngredientComponent({
   ingredient,
   scale,
   updateScale,
 }: IngredientProps): JSX.Element {
-  const count_vdom = quantity_match(ingredient.quantity, {
-    undefined: () => <View />,
-    toTaste: () => <View />,
-    regular: (count, measurement) => (
-      <TextInput
-        style={[
-          useBackgroundColorStyle(),
-          {
-            borderWidth: 1,
-            fontStyle: 'italic',
-            borderStyle: 'dashed',
-            paddingHorizontal: 5,
-            paddingVertical: 0,
-            color: useTextColor(),
-            borderColor: useTextColor(),
-          },
-        ]}
-        value={(count * scale).toString()}
-        onChangeText={newText => {
-          const newCount = Number(newText);
-          if (!isNaN(newCount)) {
-            updateScale(newCount / count);
-          }
-        }}
-      />
-    ),
-  });
-
-  const measurement_vdom = quantity_match(ingredient.quantity, {
-    undefined: () => <Text>Undefined</Text>,
-    toTaste: () => <Text>To taste</Text>,
-    regular: (count, measurement) => (
-      <View style={{flexDirection: 'row', height: 40}}>
-        <Text style={useTextColorStyle()}> {measurement}</Text>
-        <Button title="📏" />
-      </View>
-    ),
-  });
-
   return (
     <View style={[styles.ingredientContainer, {flexDirection: 'row'}]}>
       <View style={{flex: 7}}>
@@ -88,8 +113,16 @@ function IngredientComponent({
           {ingredient.name}
         </Text>
       </View>
-      <View style={{flex: 2}}>{count_vdom}</View>
-      <View style={{flex: 1}}>{measurement_vdom}</View>
+      <View style={{flex: 2}}>
+        <QuantityComponent
+          quantity={ingredient.quantity}
+          scale={scale}
+          updateScale={updateScale}
+        />
+      </View>
+      <View style={{flex: 1}}>
+        <MeasurementComponent quantity={ingredient.quantity} />
+      </View>
     </View>
   );
 }

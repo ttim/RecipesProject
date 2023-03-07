@@ -41,24 +41,6 @@ export type Ingredient = {
   quantity: Quantity;
 };
 
-export function quantity_match<T>(
-  value: Quantity,
-  match: {
-    toTaste: () => T;
-    undefined: () => T;
-    regular: (count: number, measurement: Measurement) => T;
-  },
-): T {
-  switch (value.type) {
-    case 'to taste':
-      return match.toTaste();
-    case 'undefined':
-      return match.undefined();
-    case 'regular':
-      return match.regular(value.count, value.measurement);
-  }
-}
-
 export type Recipe = {
   name: string;
   items: Ingredient[];
