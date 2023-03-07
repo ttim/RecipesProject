@@ -31,15 +31,10 @@ type Counts = (typeof COUNTS)[number]; // https://stackoverflow.com/questions/44
 
 export type Measurement = Weights | Volumes | Counts;
 
-export type Quantity = [number, Measurement] | 'to taste' | undefined;
-
-export function quantity_to_str(quantity: Quantity): string {
-  return quantity_match(quantity, {
-    toTaste: () => 'to taste',
-    undefined: () => 'undefined',
-    regular: (count, measurement) => count + ' '+measurement,
-  });
-}
+export type Quantity =
+  | {type: 'regular'; count: number; measurement: Measurement}
+  | {type: 'to taste'}
+  | {type: 'undefined'};
 
 export type Ingredient = {
   name: string;
@@ -54,13 +49,13 @@ export function quantity_match<T>(
     regular: (count: number, measurement: Measurement) => T;
   },
 ): T {
-  switch (value) {
+  switch (value.type) {
     case 'to taste':
       return match.toTaste();
-    case undefined:
+    case 'undefined':
       return match.undefined();
-    default:
-      return match.regular(value[0], value[1]);
+    case 'regular':
+      return match.regular(value.count, value.measurement);
   }
 }
 
@@ -70,106 +65,117 @@ export type Recipe = {
   yield: Quantity;
 };
 
+function q(arg: [number, Measurement] | 'to taste' | 'undefined'): Quantity {
+  switch (arg) {
+    case 'to taste':
+      return {type: 'to taste'};
+    case 'undefined':
+      return {type: 'undefined'};
+    default:
+      return {type: 'regular', count: arg[0], measurement: arg[1]};
+  }
+}
+
 export const EXAMPLE_RECIPES: Recipe[] = [
   {
     name: 'Sunchoke Veloute',
     items: [
-      {name: 'sunchokes', quantity: [2500, 'g']},
-      {name: 'lobster stock', quantity: [3500, 'g']},
-      {name: 'chamomile', quantity: [20, 'g']},
-      {name: 'cream', quantity: [400, 'g']},
-      {name: 'salt', quantity: [15, 'g']},
+      {name: 'sunchokes', quantity: q([2500, 'g'])},
+      {name: 'lobster stock', quantity: q([3500, 'g'])},
+      {name: 'chamomile', quantity: q([20, 'g'])},
+      {name: 'cream', quantity: q([400, 'g'])},
+      {name: 'salt', quantity: q([15, 'g'])},
     ],
-    yield: [6.25, 'quart'],
+    yield: q([6.25, 'quart']),
   },
   {
     name: 'Walnut Pate',
     items: [
-      {name: 'chopped white onion', quantity: [100, 'g']},
-      {name: 'minced garlic', quantity: [10, 'g']},
-      {name: 'walnut', quantity: [200, 'g']},
-      {name: 'nutritional yeast', quantity: [5, 'g']},
-      {name: 'lentils', quantity: [150, 'g']},
-      {name: 'water', quantity: [1000, 'g']},
-      {name: 'rosemary', quantity: [1, 'sprig']},
-      {name: 'salt', quantity: 'to taste'},
+      {name: 'chopped white onion', quantity: q([100, 'g'])},
+      {name: 'minced garlic', quantity: q([10, 'g'])},
+      {name: 'walnut', quantity: q([200, 'g'])},
+      {name: 'nutritional yeast', quantity: q([5, 'g'])},
+      {name: 'lentils', quantity: q([150, 'g'])},
+      {name: 'water', quantity: q([1000, 'g'])},
+      {name: 'rosemary', quantity: q([1, 'sprig'])},
+      {name: 'salt', quantity: q('to taste')},
     ],
-    yield: undefined,
+    yield: q('undefined'),
   },
   {
     name: 'Whipped Creme Fraiche Pate',
     items: [
-      {name: 'cream fraiche', quantity: [500, 'g']},
-      {name: 'ultratex', quantity: [4, 'g']},
-      {name: 'lemon (zest + juice)', quantity: [1, 'item']},
-      {name: 'salt', quantity: 'to taste'},
+      {name: 'cream fraiche', quantity: q([500, 'g'])},
+      {name: 'ultratex', quantity: q([4, 'g'])},
+      {name: 'lemon (zest + juice)', quantity: q([1, 'item'])},
+      {name: 'salt', quantity: q('to taste')},
     ],
-    yield: undefined,
+    yield: q('undefined'),
   },
   {
     name: 'Egg Confit',
     items: [
-      {name: 'eggs', quantity: [10, 'item']},
-      {name: 'tamari', quantity: [5, 'g']},
-      {name: 'water', quantity: [5, 'g']},
-      {name: 'salt', quantity: 'to taste'},
+      {name: 'eggs', quantity: q([10, 'item'])},
+      {name: 'tamari', quantity: q([5, 'g'])},
+      {name: 'water', quantity: q([5, 'g'])},
+      {name: 'salt', quantity: q('to taste')},
     ],
-    yield: undefined,
+    yield: q('undefined'),
   },
   {
     name: 'Shio Koji marinade',
     items: [
-      {name: 'yuzu kosho', quantity: [60, 'g']},
-      {name: 'shio koji', quantity: [300, 'g']},
-      {name: 'plum vinegar', quantity: [60, 'g']},
-      {name: 'sugar', quantity: [30, 'g']},
-      {name: 'yuzu juice', quantity: [30, 'g']},
-      {name: 'canola oil', quantity: [40, 'g']},
+      {name: 'yuzu kosho', quantity: q([60, 'g'])},
+      {name: 'shio koji', quantity: q([300, 'g'])},
+      {name: 'plum vinegar', quantity: q([60, 'g'])},
+      {name: 'sugar', quantity: q([30, 'g'])},
+      {name: 'yuzu juice', quantity: q([30, 'g'])},
+      {name: 'canola oil', quantity: q([40, 'g'])},
     ],
-    yield: [1, 'pint'],
+    yield: q([1, 'pint']),
   },
   {
     name: 'Kumquat dressing',
     items: [
-      {name: 'kumquats', quantity: [500, 'g']},
-      {name: 'cooking liquid', quantity: [500, 'g']},
-      {name: 'red pearl onion', quantity: [250, 'g']},
-      {name: 'serrano pepper', quantity: [100, 'g']},
-      {name: 'ginger', quantity: [165, 'g']},
-      {name: 'yuzu juice', quantity: [165, 'g']},
-      {name: 'lime juice', quantity: [415, 'g']},
-      {name: 'shiso', quantity: [40, 'g']},
-      {name: 'water', quantity: [415, 'g']},
-      {name: 'rice wine vinegar', quantity: [100, 'g']},
-      {name: 'salt', quantity: 'to taste'},
+      {name: 'kumquats', quantity: q([500, 'g'])},
+      {name: 'cooking liquid', quantity: q([500, 'g'])},
+      {name: 'red pearl onion', quantity: q([250, 'g'])},
+      {name: 'serrano pepper', quantity: q([100, 'g'])},
+      {name: 'ginger', quantity: q([165, 'g'])},
+      {name: 'yuzu juice', quantity: q([165, 'g'])},
+      {name: 'lime juice', quantity: q([415, 'g'])},
+      {name: 'shiso', quantity: q([40, 'g'])},
+      {name: 'water', quantity: q([415, 'g'])},
+      {name: 'rice wine vinegar', quantity: q([100, 'g'])},
+      {name: 'salt', quantity: q('to taste')},
     ],
-    yield: undefined,
+    yield: q('undefined'),
   },
   {
     name: 'Chicken Liver Mousse',
     items: [
-      {name: 'chicken livers', quantity: [2250, 'g']},
-      {name: 'pink salt', quantity: [15, 'g']},
-      {name: 'chopped shallot', quantity: [225, 'g']},
-      {name: 'cardamom (seeds removed from pod)', quantity: [9, 'g']},
-      {name: 'arak', quantity: [150, 'g']},
-      {name: 'cream', quantity: [900, 'g']},
-      {name: 'butter', quantity: [150, 'g']},
-      {name: 'duck fat', quantity: [75, 'g']},
+      {name: 'chicken livers', quantity: q([2250, 'g'])},
+      {name: 'pink salt', quantity: q([15, 'g'])},
+      {name: 'chopped shallot', quantity: q([225, 'g'])},
+      {name: 'cardamom (seeds removed from pod)', quantity: q([9, 'g'])},
+      {name: 'arak', quantity: q([150, 'g'])},
+      {name: 'cream', quantity: q([900, 'g'])},
+      {name: 'butter', quantity: q([150, 'g'])},
+      {name: 'duck fat', quantity: q([75, 'g'])},
     ],
-    yield: undefined,
+    yield: q('undefined'),
   },
   {
     name: 'Carrot soup',
     items: [
-      {name: 'carrot juice', quantity: [1000, 'g']},
-      {name: 'carrots, peeled and chopped', quantity: [600, 'g']},
-      {name: 'onions, chopped', quantity: [100, 'g']},
-      {name: 'ginger, minced', quantity: [100, 'g']},
-      {name: 'olive oil', quantity: [50, 'g']},
-      {name: 'fresh ginger juice', quantity: [30, 'g']},
-      {name: 'salt', quantity: 'to taste'},
+      {name: 'carrot juice', quantity: q([1000, 'g'])},
+      {name: 'carrots, peeled and chopped', quantity: q([600, 'g'])},
+      {name: 'onions, chopped', quantity: q([100, 'g'])},
+      {name: 'ginger, minced', quantity: q([100, 'g'])},
+      {name: 'olive oil', quantity: q([50, 'g'])},
+      {name: 'fresh ginger juice', quantity: q([30, 'g'])},
+      {name: 'salt', quantity: q('to taste')},
     ],
-    yield: [1.65, 'quart'],
+    yield: q([1.65, 'quart']),
   },
 ];
