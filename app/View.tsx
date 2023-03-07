@@ -1,4 +1,4 @@
-import React, {PropsWithoutRef} from 'react';
+import React, {PropsWithoutRef, useState} from 'react';
 import {Ingredient, Quantity, Recipe} from './Model';
 import {
   Button,
@@ -47,35 +47,41 @@ function QuantityComponent({
   updateScale: (newScale: number) => void;
 }>) {
   const backgroundColorStyle = useBackgroundColorStyle();
-  const textColor = useTextColor();
+  const textColorStyle = useTextColorStyle();
+  const borderColor = useTextColor();
+  const [text, setText] = useState<undefined | string>(undefined);
 
   switch (quantity.type) {
     case 'undefined':
-      return <View />;
+      return <Text style={textColorStyle}>undefined</Text>;
     case 'to taste':
-      return <View />;
+      return <Text style={textColorStyle}>to taste</Text>;
     case 'regular':
       return (
         <TextInput
           style={[
             backgroundColorStyle,
+            textColorStyle,
             {
               borderWidth: 1,
               fontStyle: 'italic',
               borderStyle: 'dashed',
               paddingHorizontal: 5,
               paddingVertical: 0,
-              color: textColor,
-              borderColor: textColor,
+              borderColor: borderColor,
             },
           ]}
-          value={(quantity.count * scale).toFixed(0)}
+          value={
+            text === undefined ? (quantity.count * scale).toFixed(0) : text
+          }
           onChangeText={newText => {
+            setText(newText);
             const newCount = Number(newText);
             if (!isNaN(newCount)) {
               updateScale(newCount / quantity.count);
             }
           }}
+          onEndEditing={() => setText(undefined)}
         />
       );
   }
@@ -89,15 +95,14 @@ function MeasurementComponent({
   switch (quantity.type) {
     case 'regular':
       return (
-        <View style={{flexDirection: 'row', height: 40}}>
-          <Text style={textColor}> {quantity.measurement}</Text>
-          <Button title="📏" />
+        <View style={{flexDirection: 'row', height: 30}}>
+          <Text style={textColor}> {quantity.measurement}📏</Text>
         </View>
       );
     case 'to taste':
-      return <Text>To taste</Text>;
+      return <View />;
     case 'undefined':
-      return <Text>Undefined</Text>;
+      return <View />;
   }
 }
 
