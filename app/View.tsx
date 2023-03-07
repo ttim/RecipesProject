@@ -55,6 +55,8 @@ function IngredientComponent({
             borderStyle: 'dashed',
             paddingHorizontal: 5,
             paddingVertical: 0,
+            color: useTextColor(),
+            borderColor: useTextColor(),
           },
         ]}
         value={(count * scale).toString()}
@@ -73,7 +75,7 @@ function IngredientComponent({
     toTaste: () => <Text>To taste</Text>,
     regular: (count, measurement) => (
       <View style={{flexDirection: 'row', height: 40}}>
-        <Text> {measurement}</Text>
+        <Text style={useTextColorStyle()}> {measurement}</Text>
         <Button title="📏" />
       </View>
     ),
