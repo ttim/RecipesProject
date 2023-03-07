@@ -69,7 +69,7 @@ function QuantityComponent({
               borderColor: textColor,
             },
           ]}
-          value={(quantity.count * scale).toString()}
+          value={(quantity.count * scale).toFixed(0)}
           onChangeText={newText => {
             const newCount = Number(newText);
             if (!isNaN(newCount)) {
