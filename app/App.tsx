@@ -4,7 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {LibraryStackScreen} from './Library';
 import {Text, useColorScheme} from 'react-native';
-import {useBackgroundColorStyle} from './View';
+import {useBackgroundColorStyle} from './Hooks';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 

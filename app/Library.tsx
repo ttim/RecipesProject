@@ -1,6 +1,6 @@
 import {Text, View} from 'react-native';
 import React from 'react';
-import {useBackgroundColorStyle, useTextColorStyle} from './View';
+import {useBackgroundColorStyle, useTextColorStyle} from './Hooks';
 
 export function LibraryStackScreen(): JSX.Element {
   return (

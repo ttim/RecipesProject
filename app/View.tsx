@@ -9,6 +9,11 @@ import {
   View,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {
+  useBackgroundColorStyle,
+  useTextColor,
+  useTextColorStyle,
+} from './Hooks';
 
 const styles = StyleSheet.create({
   recipeContainer: {
@@ -205,24 +210,4 @@ export function Recipes({
 
 export function Logo(): JSX.Element {
   return <Text>👨‍🍳🤌</Text>;
-}
-
-export function useBackgroundColor() {
-  return useColorScheme() === 'dark' ? Colors.black : Colors.white;
-}
-
-export function useTextContentColor() {
-  return useColorScheme() === 'dark' ? 'light-content' : 'dark-content';
-}
-
-export function useTextColor() {
-  return useColorScheme() === 'dark' ? Colors.white : Colors.black;
-}
-
-export function useBackgroundColorStyle() {
-  return {backgroundColor: useBackgroundColor()};
-}
-
-export function useTextColorStyle() {
-  return {color: useTextColor()};
 }

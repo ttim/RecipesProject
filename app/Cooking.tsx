@@ -7,22 +7,21 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {
-  Logo,
-  Recipes,
-  useBackgroundColor,
-  useBackgroundColorStyle,
-  useTextColor,
-  useTextColorStyle,
-  useTextContentColor,
-} from './View';
+import {Logo, Recipes} from './View';
 import {EXAMPLE_RECIPES, Recipe} from './Model';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {ListItem, SearchBar} from 'react-native-elements';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  useBackgroundColor,
+  useBackgroundColorStyle,
+  useTextColor,
+  useTextColorStyle,
+  useTextContentColor,
+} from './Hooks';
 
 type StackParams = {
   InProgress: {addedRecipe: Recipe} | undefined;
