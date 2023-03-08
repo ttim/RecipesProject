@@ -1,5 +1,5 @@
 import {usePersistentState} from './Hooks';
-import { EXAMPLE_RECIPES, Recipe } from "./Model";
+import {EXAMPLE_RECIPES, Recipe} from './Model';
 
 export type RecipesInProgress = [Recipe, number][];
 
@@ -36,7 +36,7 @@ export function useRecipesInProgress(): {
 }
 
 export function useRecipes(): {
-  recipes: Recipe[],
+  recipes: Recipe[];
 } {
   const [recipes, setRecipes] = usePersistentState<Recipe[]>(
     'recipes',
