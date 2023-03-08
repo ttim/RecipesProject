@@ -8,21 +8,20 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Logo, Recipes} from './View';
-import {EXAMPLE_RECIPES, Recipe} from './Model';
+import {Recipe} from './Model';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {ListItem, SearchBar} from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useBackgroundColor,
   useBackgroundColorStyle,
-  usePersistentState,
   useTextColor,
   useTextColorStyle,
   useTextContentColor,
 } from './Hooks';
+import {useRecipes, useRecipesInProgress} from './State';
 
 type StackParams = {
   InProgress: {addedRecipe: Recipe} | undefined;
@@ -35,17 +34,14 @@ function InProgressScreen({
 }: NativeStackScreenProps<StackParams, 'InProgress'>): JSX.Element {
   const textColor = useTextColor();
 
-  const [recipes, setRecipes] = usePersistentState(
-    'recipes_in_progress',
-    [] as [Recipe, number][],
-  );
+  const {recipes, add, remove, updateScale} = useRecipesInProgress();
 
   useEffect(() => {
     if (route.params?.addedRecipe) {
-      setRecipes([...recipes, [route.params?.addedRecipe, 1]]);
+      add(route.params?.addedRecipe);
       navigation.setParams({addedRecipe: undefined});
     }
-  }, [navigation, recipes, route.params?.addedRecipe]);
+  }, [add, navigation, route.params?.addedRecipe]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -72,16 +68,8 @@ function InProgressScreen({
         contentContainerStyle={{flexGrow: 1}}>
         <Recipes
           recipes={recipes}
-          onDeleteRecipe={idx => {
-            setRecipes(recipes.slice(0, idx).concat(recipes.slice(idx + 1)));
-          }}
-          updateScaleRecipe={(idx, newScale) => {
-            const newRecipes = [] as [Recipe, number][];
-            newRecipes.push(...recipes.slice(0, idx));
-            newRecipes.push([recipes[idx][0], newScale]);
-            newRecipes.push(...recipes.slice(idx + 1));
-            setRecipes(newRecipes);
-          }}
+          onDeleteRecipe={remove}
+          updateScaleRecipe={updateScale}
         />
       </ScrollView>
     </SafeAreaView>
@@ -90,7 +78,6 @@ function InProgressScreen({
 
 function AddInProgressItemModalScreen({
   navigation,
-  route,
 }: NativeStackScreenProps<StackParams, 'AddInProgressItem'>): JSX.Element {
   const textColor = useTextColor();
 
@@ -106,21 +93,15 @@ function AddInProgressItemModalScreen({
     });
   });
 
+  const {recipes} = useRecipes();
   const [search, setSearch] = useState('');
-  const [recipes, setRecipes] = useState(EXAMPLE_RECIPES);
 
-  const updateSearch = (search: string) => {
-    setSearch(search);
-    if (search === '') {
-      setRecipes(EXAMPLE_RECIPES);
-    } else {
-      setRecipes(
-        EXAMPLE_RECIPES.filter(recipe =>
+  const filteredRecipes =
+    search === ''
+      ? recipes
+      : recipes.filter(recipe =>
           recipe.name.toLowerCase().includes(search.toLowerCase()),
-        ),
-      );
-    }
-  };
+        );
 
   const backgroundStyle = useBackgroundColorStyle();
   const textStyle = useTextColorStyle();
@@ -129,11 +110,11 @@ function AddInProgressItemModalScreen({
     <View style={backgroundStyle}>
       <SearchBar
         placeholder="Type Here..."
-        onChangeText={updateSearch}
+        onChangeText={setSearch}
         value={search}
         lightTheme={useColorScheme() !== 'dark'}
       />
-      {recipes.map((recipe, index) => (
+      {filteredRecipes.map((recipe, index) => (
         <ListItem
           key={index}
           bottomDivider
