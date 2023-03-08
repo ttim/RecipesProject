@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useBackgroundColor,
   useBackgroundColorStyle,
+  usePersistentState,
   useTextColor,
   useTextColorStyle,
   useTextContentColor,
@@ -28,57 +29,20 @@ type StackParams = {
   AddInProgressItem: undefined;
 };
 
-const storeData: (
-  recipes: [Recipe, number][],
-) => Promise<void> = async recipes => {
-  try {
-    const jsonValue = JSON.stringify(recipes);
-    await AsyncStorage.setItem('@storage_Key', jsonValue);
-    return;
-  } catch (e) {
-    // saving error
-    return;
-  }
-};
-
-const getData: () => Promise<[Recipe, number][]> = async () => {
-  try {
-    const jsonValue = await AsyncStorage.getItem('@storage_Key');
-    return jsonValue != null
-      ? (JSON.parse(jsonValue) as [Recipe, number][])
-      : [];
-  } catch (e) {
-    // error reading value
-    return [];
-  }
-};
-
 function InProgressScreen({
   navigation,
   route,
 }: NativeStackScreenProps<StackParams, 'InProgress'>): JSX.Element {
   const textColor = useTextColor();
 
-  const [recipes, setRecipes] = useState([] as [Recipe, number][]);
-
-  const updateRecipes = (recipes: [Recipe, number][]) => {
-    setRecipes(recipes);
-    const saveRecipes = async () => {
-      await storeData(recipes);
-    };
-    saveRecipes();
-  };
-
-  useEffect(() => {
-    const populateRecipes = async () => {
-      setRecipes(await getData());
-    };
-    populateRecipes();
-  }, []);
+  const [recipes, setRecipes] = usePersistentState(
+    'recipes_in_progress',
+    [] as [Recipe, number][],
+  );
 
   useEffect(() => {
     if (route.params?.addedRecipe) {
-      updateRecipes([...recipes, [route.params?.addedRecipe, 1]]);
+      setRecipes([...recipes, [route.params?.addedRecipe, 1]]);
       navigation.setParams({addedRecipe: undefined});
     }
   }, [navigation, recipes, route.params?.addedRecipe]);
@@ -107,14 +71,14 @@ function InProgressScreen({
         <Recipes
           recipes={recipes}
           onDeleteRecipe={idx => {
-            updateRecipes(recipes.slice(0, idx).concat(recipes.slice(idx + 1)));
+            setRecipes(recipes.slice(0, idx).concat(recipes.slice(idx + 1)));
           }}
           updateScaleRecipe={(idx, newScale) => {
             const newRecipes = [] as [Recipe, number][];
             newRecipes.push(...recipes.slice(0, idx));
             newRecipes.push([recipes[idx][0], newScale]);
             newRecipes.push(...recipes.slice(idx + 1));
-            updateRecipes(newRecipes);
+            setRecipes(newRecipes);
           }}
         />
       </ScrollView>
