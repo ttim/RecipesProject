@@ -59,6 +59,8 @@ function QuantityComponent({
     case 'regular':
       return (
         <TextInput
+          inputMode={'decimal'}
+          keyboardType={'decimal-pad'}
           style={[
             backgroundColorStyle,
             textColorStyle,
