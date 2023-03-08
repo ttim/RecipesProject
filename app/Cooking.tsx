@@ -67,7 +67,9 @@ function InProgressScreen({
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={useBackgroundColorStyle()}>
+        automaticallyAdjustKeyboardInsets="true"
+        style={useBackgroundColorStyle()}
+        contentContainerStyle={{flexGrow: 1}}>
         <Recipes
           recipes={recipes}
           onDeleteRecipe={idx => {

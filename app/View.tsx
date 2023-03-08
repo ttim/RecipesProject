@@ -17,22 +17,23 @@ import {
 
 const styles = StyleSheet.create({
   recipeContainer: {
-    marginTop: 24,
-    paddingHorizontal: 24,
+    marginTop: 8,
+    marginBottom: 8,
+    paddingHorizontal: 16,
   },
   ingredientContainer: {
-    marginTop: 8,
-    paddingHorizontal: 24,
+    marginTop: 0,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   recipeName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '600',
   },
   ingredientText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '300',
   },
 });
 
@@ -154,7 +155,8 @@ function RecipeComponent(
           },
         ]}>
         {props.recipe.name}
-        <Button title="✅" onPress={props.onDelete} />
+        <Text> </Text>
+        <Text onPress={props.onDelete}>✅</Text>
       </Text>
       <View>
         {props.recipe.items.map(ingredient => (
@@ -178,7 +180,7 @@ export function Recipes(
   }>,
 ): JSX.Element {
   return (
-    <View style={useBackgroundColorStyle()}>
+    <View style={[useBackgroundColorStyle(), {flex: 1}]}>
       <View>
         {props.recipes.map(([recipe, scale], index) => (
           <RecipeComponent
