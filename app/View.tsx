@@ -36,26 +36,19 @@ const styles = StyleSheet.create({
   },
 });
 
-type IngredientProps = PropsWithoutRef<{
-  ingredient: Ingredient;
-  scale: number;
-  updateScale: (newScale: number) => void;
-}>;
-
-function QuantityComponent({
-  quantity,
-  scale,
-  updateScale,
-}: PropsWithoutRef<{
-  quantity: Quantity;
-  scale: number;
-  updateScale: (newScale: number) => void;
-}>) {
+function QuantityComponent(
+  props: PropsWithoutRef<{
+    quantity: Quantity;
+    scale: number;
+    updateScale: (newScale: number) => void;
+  }>,
+) {
   const backgroundColorStyle = useBackgroundColorStyle();
   const textColorStyle = useTextColorStyle();
   const borderColor = useTextColor();
   const [text, setText] = useState<undefined | string>(undefined);
 
+  const quantity = props.quantity;
   switch (quantity.type) {
     case 'undefined':
       return <Text style={textColorStyle}>undefined</Text>;
@@ -79,13 +72,15 @@ function QuantityComponent({
             },
           ]}
           value={
-            text === undefined ? (quantity.count * scale).toFixed(0) : text
+            text === undefined
+              ? (quantity.count * props.scale).toFixed(0)
+              : text
           }
           onChangeText={newText => {
             setText(newText);
             const newCount = Number(newText);
             if (!isNaN(newCount)) {
-              updateScale(newCount / quantity.count);
+              props.updateScale(newCount / quantity.count);
             }
           }}
           onEndEditing={() => setText(undefined)}
@@ -94,16 +89,14 @@ function QuantityComponent({
   }
 }
 
-function MeasurementComponent({
-  quantity,
-}: PropsWithoutRef<{quantity: Quantity}>) {
+function MeasurementComponent(props: PropsWithoutRef<{quantity: Quantity}>) {
   const textColor = useTextColorStyle();
 
-  switch (quantity.type) {
+  switch (props.quantity.type) {
     case 'regular':
       return (
         <View style={{flexDirection: 'row', height: 30}}>
-          <Text style={textColor}> {quantity.measurement}📏</Text>
+          <Text style={textColor}> {props.quantity.measurement}📏</Text>
         </View>
       );
     case 'to taste':
@@ -113,44 +106,42 @@ function MeasurementComponent({
   }
 }
 
-function IngredientComponent({
-  ingredient,
-  scale,
-  updateScale,
-}: IngredientProps): JSX.Element {
+function IngredientComponent(
+  props: PropsWithoutRef<{
+    ingredient: Ingredient;
+    scale: number;
+    updateScale: (newScale: number) => void;
+  }>,
+): JSX.Element {
   return (
     <View style={[styles.ingredientContainer, {flexDirection: 'row'}]}>
       <View style={{flex: 7}}>
         <Text style={[styles.ingredientText, useTextColorStyle()]}>
-          {ingredient.name}
+          {props.ingredient.name}
         </Text>
       </View>
       <View style={{flex: 2}}>
         <QuantityComponent
-          quantity={ingredient.quantity}
-          scale={scale}
-          updateScale={updateScale}
+          quantity={props.ingredient.quantity}
+          scale={props.scale}
+          updateScale={props.updateScale}
         />
       </View>
       <View style={{flex: 1}}>
-        <MeasurementComponent quantity={ingredient.quantity} />
+        <MeasurementComponent quantity={props.ingredient.quantity} />
       </View>
     </View>
   );
 }
 
-type RecipeProps = PropsWithoutRef<{
-  recipe: Recipe;
-  onDelete: () => void;
-  scale: number;
-  updateScale: (newScale: number) => void;
-}>;
-function RecipeComponent({
-  recipe,
-  onDelete,
-  scale,
-  updateScale,
-}: RecipeProps): JSX.Element {
+function RecipeComponent(
+  props: PropsWithoutRef<{
+    recipe: Recipe;
+    onDelete: () => void;
+    scale: number;
+    updateScale: (newScale: number) => void;
+  }>,
+): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
@@ -162,16 +153,16 @@ function RecipeComponent({
             color: isDarkMode ? Colors.white : Colors.black,
           },
         ]}>
-        {recipe.name}
-        <Button title="✅" onPress={onDelete} />
+        {props.recipe.name}
+        <Button title="✅" onPress={props.onDelete} />
       </Text>
       <View>
-        {recipe.items.map(ingredient => (
+        {props.recipe.items.map(ingredient => (
           <IngredientComponent
             key={ingredient.name}
             ingredient={ingredient}
-            scale={scale}
-            updateScale={updateScale}
+            scale={props.scale}
+            updateScale={props.updateScale}
           />
         ))}
       </View>
@@ -179,27 +170,24 @@ function RecipeComponent({
   );
 }
 
-type RecipesProps = PropsWithoutRef<{
-  recipes: [Recipe, number][];
-  onDeleteRecipe: (idx: number) => void;
-  updateScaleRecipe: (idx: number, newScale: number) => void;
-}>;
-export function Recipes({
-  recipes,
-  onDeleteRecipe,
-  updateScaleRecipe,
-}: RecipesProps): JSX.Element {
+export function Recipes(
+  props: PropsWithoutRef<{
+    recipes: [Recipe, number][];
+    onDeleteRecipe: (idx: number) => void;
+    updateScaleRecipe: (idx: number, newScale: number) => void;
+  }>,
+): JSX.Element {
   return (
     <View style={useBackgroundColorStyle()}>
       <View>
-        {recipes.map(([recipe, scale], index) => (
+        {props.recipes.map(([recipe, scale], index) => (
           <RecipeComponent
             key={recipe.name}
             recipe={recipe}
-            onDelete={() => onDeleteRecipe(index)}
+            onDelete={() => props.onDeleteRecipe(index)}
             scale={scale}
             updateScale={newScale => {
-              updateScaleRecipe(index, newScale);
+              props.updateScaleRecipe(index, newScale);
             }}
           />
         ))}
